@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Aetheria Orbit AI - Plataforma de telemetría orbital y exploración de espacio profundo con integración continua CircleCI">
+  <title>Aetheria // Orbit AI - Deep Space Telemetry Hub</title>
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;600;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Canvas para partículas estelares y constelaciones interactivas -->
+  <canvas id="telemetry-canvas" aria-hidden="true"></canvas>
+
+  <div class="app-layout">
+    <!-- Barra de Navegación Superior -->
+    <header class="top-nav glass-panel">
+      <div class="nav-brand">
+        <div class="brand-orb">
+          <span class="orb-core"></span>
+          <span class="orb-ring"></span>
+        </div>
+        <div class="brand-text">
+          <span class="brand-title">AETHERIA <span class="badge-v">v2.5</span></span>
+          <span class="brand-subtitle">Orbital Deep Space Observatory</span>
+        </div>
+      </div>
+
+      <div class="nav-status-group">
+        <div class="status-indicator">
+          <span class="pulse-dot"></span>
+          <span class="status-label">CI/CD LINK:</span>
+          <span class="status-val text-neon-green">CIRCLECI VERIFIED</span>
+        </div>
+        <div class="nav-clock" id="nav-utc-clock">
+          <span class="clock-icon">⏱</span>
+          <span id="utc-time-string">00:00:00 UTC</span>
+        </div>
+        <button id="btn-audio-toggle" class="btn-icon glass-button" title="Activar/Silenciar Audio Sintetizado">
+          <span id="audio-icon">🔇</span>
+          <span class="btn-text">Audio FX</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- Contenedor Principal -->
+    <main class="dashboard-grid">
+      
+      <!-- HERO BANNER / RESUMEN DE MISIÓN -->
+      <section class="hero-banner glass-panel" id="hero-section">
+        <div class="hero-content">
+          <div class="chip-category">
+            <span class="chip-dot"></span>
+            MISIÓN ORBITAL EXPLORER-9 // SECTOR ZETA
+          </div>
+          <h1 class="hero-title">
+            Telemetría Cuántica &amp; <br>
+            <span class="gradient-text">Exploración Cósmica</span>
+          </h1>
+          <p class="hero-desc">
+            Monitorización en tiempo real de cuadrantes estelares, espectrometría de exoplanetas y 
+            despliegue automatizado continuo mediante flujos de trabajo en <strong>CircleCI</strong>.
+          </p>
+          <div class="hero-actions">
+            <button id="btn-scan-deep-space" class="btn-primary">
+              <span class="btn-glow"></span>
+              <span class="btn-label">Iniciar Escaneo Estelar</span>
+            </button>
+            <button id="btn-simulate-flare" class="btn-secondary">
+              <span class="btn-label">⚡ Simular Tormenta Solar</span>
+            </button>
+            <button id="btn-system-check" class="btn-ghost">
+              <span class="btn-label">⚙ Test de Diagnóstico</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-visual">
+          <div class="radar-container" id="radar-container">
+            <div class="radar-sweep"></div>
+            <div class="radar-ring ring-1"></div>
+            <div class="radar-ring ring-2"></div>
+            <div class="radar-ring ring-3"></div>
+            <div class="blip blip-1" title="Estación Relay Alfa"></div>
+            <div class="blip blip-2" title="Sonda Kepler-4"></div>
+            <div class="blip blip-3" title="Anomalía Gravitacional"></div>
+            <div class="radar-center"></div>
+          </div>
+          <div class="radar-caption">
+            <span>RADAR MATRIZ ACTIVA</span>
+            <span id="radar-targets-count">3 OBJETOS EN RANGO</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- KPI METRICS ROW -->
+      <section class="kpi-row" id="kpi-metrics-row">
+        <!-- Tarjeta 1: Velocidad Orbital -->
+        <article class="metric-card glass-panel" id="card-velocity">
+          <div class="metric-header">
+            <span class="metric-icon">🚀</span>
+            <span class="metric-name">Velocidad Orbital</span>
+            <span class="badge-tag">ESTABLE</span>
+          </div>
+          <div class="metric-body">
+            <div class="metric-main-value">
+              <span id="val-velocity">27,540</span>
+              <span class="metric-unit">km/h</span>
+            </div>
+            <div class="metric-sparkline-track">
+              <div class="metric-sparkline-bar" id="bar-velocity" style="width: 78%;"></div>
+            </div>
+          </div>
+          <div class="metric-footer">
+            <span>Órbita LEO: 408 km</span>
+            <span class="trend positive">▲ +0.4%</span>
+          </div>
+        </article>
+
+        <!-- Tarjeta 2: Núcleo Cuántico -->
+        <article class="metric-card glass-panel" id="card-temp">
+          <div class="metric-header">
+            <span class="metric-icon">⚛</span>
+            <span class="metric-name">Núcleo Cuántico</span>
+            <span class="badge-tag tag-cyan">CRIOGENIZADO</span>
+          </div>
+          <div class="metric-body">
+            <div class="metric-main-value">
+              <span id="val-temp">2.71</span>
+              <span class="metric-unit">Kelvin</span>
+            </div>
+            <div class="metric-sparkline-track">
+              <div class="metric-sparkline-bar bar-cyan" id="bar-temp" style="width: 25%;"></div>
+            </div>
+          </div>
+          <div class="metric-footer">
+            <span>Límite Crítico: 15 K</span>
+            <span class="trend neutral">● 0.0% Var</span>
+          </div>
+        </article>
+
+        <!-- Tarjeta 3: Latencia Cuántica -->
+        <article class="metric-card glass-panel" id="card-latency">
+          <div class="metric-header">
+            <span class="metric-icon">📡</span>
+            <span class="metric-name">Enlace DSN Relé</span>
+            <span class="badge-tag tag-green">ÓPTIMO</span>
+          </div>
+          <div class="metric-body">
+            <div class="metric-main-value">
+              <span id="val-latency">18</span>
+              <span class="metric-unit">ms</span>
+            </div>
+            <div class="metric-sparkline-track">
+              <div class="metric-sparkline-bar bar-green" id="bar-latency" style="width: 94%;"></div>
+            </div>
+          </div>
+          <div class="metric-footer">
+            <span>Ancho de banda: 12.8 Gbps</span>
+            <span class="trend positive">▼ -2 ms</span>
+          </div>
+        </article>
+
+        <!-- Tarjeta 4: Integridad de Escudo -->
+        <article class="metric-card glass-panel" id="card-shields">
+          <div class="metric-header">
+            <span class="metric-icon">🛡️</span>
+            <span class="metric-name">Deflector de Plasma</span>
+            <span class="badge-tag tag-purple">ACTIVO</span>
+          </div>
+          <div class="metric-body">
+            <div class="metric-main-value">
+              <span id="val-shields">98.6</span>
+              <span class="metric-unit">%</span>
+            </div>
+            <div class="metric-sparkline-track">
+              <div class="metric-sparkline-bar bar-purple" id="bar-shields" style="width: 98.6%;"></div>
+            </div>
+          </div>
+          <div class="metric-footer">
+            <span>Baterías de Respaldo: 100%</span>
+            <span class="trend positive">▲ Nominal</span>
+          </div>
+        </article>
+      </section>
+
+      <!-- SECCIÓN INTERACTIVA: EXPLORADOR DE CUADRANTES ESTELARES -->
+      <section class="sector-explorer glass-panel" id="sector-explorer-section">
+        <div class="section-top-bar">
+          <div>
+            <h2 class="section-title">Matriz de Observación de Espacio Profundo</h2>
+            <p class="section-subtitle">Selecciona un cuadrante celeste para decodificar espectrografía y biofirmas</p>
+          </div>
+          <div class="sector-tabs" role="tablist">
+            <button class="tab-btn active" data-target="kepler" id="tab-kepler" role="tab" aria-selected="true">
+              🪐 Kepler-452b
+            </button>
+            <button class="tab-btn" data-target="pillars" id="tab-pillars" role="tab" aria-selected="false">
+              🌌 Pilares de la Creación
+            </button>
+            <button class="tab-btn" data-target="europa" id="tab-europa" role="tab" aria-selected="false">
+              ❄️ Océano de Europa
+            </button>
+            <button class="tab-btn" data-target="sagittarius" id="tab-sagittarius" role="tab" aria-selected="false">
+              🌀 Sagitario A*
+            </button>
+          </div>
+        </div>
+
+        <div class="tab-panels-wrapper">
+          <!-- Panel Kepler -->
+          <div class="tab-panel active" id="panel-kepler" role="tabpanel">
+            <div class="panel-layout">
+              <div class="panel-info">
+                <span class="target-badge">TIPO: SUPERTIERRA POTENCIALMENTE HABITABLE</span>
+                <h3 class="target-title">Kepler-452b (Tierra 2.0)</h3>
+                <p class="target-description">
+                  Ubicado a 1,400 años luz en la constelación del Cisne. Su estrella anfitriona es un análogo solar G2V. 
+                  Los últimos análisis espectrales sugieren vapor de agua en capas atmosféricas intermedias y ciclos estacionales de 385 días terrestres.
+                </p>
+                <div class="spec-grid">
+                  <div class="spec-item">
+                    <span class="spec-key">Distancia</span>
+                    <span class="spec-val">1,402 Años Luz</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Radio Planetario</span>
+                    <span class="spec-val">1.63 R⊕</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Composición Atmosférica</span>
+                    <span class="spec-val">N₂, O₂, H₂O (Estimado)</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Índice Similitud Tierra (ESI)</span>
+                    <span class="spec-val text-neon-cyan">0.84 / 1.0</span>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-analytics">
+                <div class="spectrometry-card">
+                  <span class="card-mini-title">ESPECTROMETRÍA DE TRANSMISIÓN DE LUZ</span>
+                  <div class="spectrum-bars">
+                    <div class="spec-bar-row">
+                      <span>Oxígeno (O₂)</span>
+                      <div class="bar-container"><div class="fill-bar" style="width: 21%;"></div></div>
+                      <span class="percentage">21%</span>
+                    </div>
+                    <div class="spec-bar-row">
+                      <span>Nitrógeno (N₂)</span>
+                      <div class="bar-container"><div class="fill-bar" style="width: 74%;"></div></div>
+                      <span class="percentage">74%</span>
+                    </div>
+                    <div class="spec-bar-row">
+                      <span>Vapor Agua (H₂O)</span>
+                      <div class="bar-container"><div class="fill-bar fill-cyan" style="width: 3.5%;"></div></div>
+                      <span class="percentage">3.5%</span>
+                    </div>
+                    <div class="spec-bar-row">
+                      <span>Dióxido de Carbono (CO₂)</span>
+                      <div class="bar-container"><div class="fill-bar fill-purple" style="width: 0.9%;"></div></div>
+                      <span class="percentage">0.9%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel Pilares de la Creación -->
+          <div class="tab-panel" id="panel-pillars" role="tabpanel">
+            <div class="panel-layout">
+              <div class="panel-info">
+                <span class="target-badge">TIPO: REGIÓN H II - NEBULOSA DE FORMACIÓN ESTELAR</span>
+                <h3 class="target-title">Pilares de la Creación (M16)</h3>
+                <p class="target-description">
+                  Columnas de polvo interestelar y gas de hidrógeno de más de 4 años luz de altura en la Nebulosa del Águila.
+                  Cuna de protoestrellas de alta masa que esculpen cavidades mediante radiación ultravioleta extrema.
+                </p>
+                <div class="spec-grid">
+                  <div class="spec-item">
+                    <span class="spec-key">Distancia</span>
+                    <span class="spec-val">6,500 Años Luz</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Altura del Pilar Mayor</span>
+                    <span class="spec-val">~4.0 Años Luz</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Elemento Dominante</span>
+                    <span class="spec-val">Hidrógeno Molecular (H₂)</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Flujo UV</span>
+                    <span class="spec-val text-neon-purple">Crítico (Estrellas O/B)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-analytics">
+                <div class="spectrometry-card">
+                  <span class="card-mini-title">CONCENTRACIÓN DE GAS Y POLVO INTERESTELAR</span>
+                  <div class="spectrum-bars">
+                    <div class="spec-bar-row">
+                      <span>Hidrógeno (H₂)</span>
+                      <div class="bar-container"><div class="fill-bar fill-purple" style="width: 89%;"></div></div>
+                      <span class="percentage">89%</span>
+                    </div>
+                    <div class="spec-bar-row">
+                      <span>Helio (He)</span>
+                      <div class="bar-container"><div class="fill-bar fill-cyan" style="width: 9.8%;"></div></div>
+                      <span class="percentage">9.8%</span>
+                    </div>
+                    <div class="spec-bar-row">
+                      <span>Silicatos e Hidrocarburos</span>
+                      <div class="bar-container"><div class="fill-bar" style="width: 1.2%;"></div></div>
+                      <span class="percentage">1.2%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel Europa -->
+          <div class="tab-panel" id="panel-europa" role="tabpanel">
+            <div class="panel-layout">
+              <div class="panel-info">
+                <span class="target-badge">TIPO: LUNA HELADA CON OCÉANO SUBSUPERFICIAL</span>
+                <h3 class="target-title">Europa (Satélite Joviano)</h3>
+                <p class="target-description">
+                  Corteza de hielo de 15-25 km que cubre un océano líquido de más de 100 km de profundidad con más agua que todos los océanos
+                  de la Tierra combinados. Geysers activos expulsan vapor y sales detectados en el periastro joviano.
+                </p>
+                <div class="spec-grid">
+                  <div class="spec-item">
+                    <span class="spec-key">Distancia Media</span>
+                    <span class="spec-val">628 Millones de km</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Espesor del Hielo</span>
+                    <span class="spec-val">~19 km</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Salinidad del Océano</span>
+                    <span class="spec-val">Sulfatos de Magnesio</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Viabilidad Biológica</span>
+                    <span class="spec-val text-neon-green">Muy Alta (Hidrotermal)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-analytics">
+                <div class="spectrometry-card">
+                  <span class="card-mini-title">ANÁLISIS DE PENACHOS CRIOGÉNICOS</span>
+                  <div class="spectrum-bars">
+                    <div class="spec-bar-row">
+                      <span>H₂O en Penacho</span>
+                      <div class="bar-container"><div class="fill-bar fill-cyan" style="width: 92%;"></div></div>
+                      <span class="percentage">92%</span>
+                    </div>
+                    <div class="spec-bar-row">
+                      <span>Sales Minerales (NaCl, MgSO₄)</span>
+                      <div class="bar-container"><div class="fill-bar" style="width: 6.8%;"></div></div>
+                      <span class="percentage">6.8%</span>
+                    </div>
+                    <div class="spec-bar-row">
+                      <span>Metano y Compuestos Orgánicos</span>
+                      <div class="bar-container"><div class="fill-bar fill-green" style="width: 1.2%;"></div></div>
+                      <span class="percentage">1.2%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel Sagitario A* -->
+          <div class="tab-panel" id="panel-sagittarius" role="tabpanel">
+            <div class="panel-layout">
+              <div class="panel-info">
+                <span class="target-badge">TIPO: AGUJERO NEGRO SUPERMASIVO CENTRAL</span>
+                <h3 class="target-title">Sagitario A* (Centro Galáctico)</h3>
+                <p class="target-description">
+                  Singularidad gravitatoria con una masa de 4.15 millones de masas solares.
+                  Observado mediante interferometría de muy larga base (EHT). Su horizonte de sucesos genera una curvatura espaciotemporal extrema.
+                </p>
+                <div class="spec-grid">
+                  <div class="spec-item">
+                    <span class="spec-key">Distancia</span>
+                    <span class="spec-val">26,673 Años Luz</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Masa Estimada</span>
+                    <span class="spec-val">4.15 × 10⁶ M☉</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Radio de Schwarzschild</span>
+                    <span class="spec-val">~12 Millones de km</span>
+                  </div>
+                  <div class="spec-item">
+                    <span class="spec-key">Velocidad Disco Acreción</span>
+                    <span class="spec-val text-neon-purple">~0.3c (30% Vel. Luz)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="panel-analytics">
+                <div class="spectrometry-card">
+                  <span class="card-mini-title">RADIACIÓN ELECTROMAGNÉTICA EMITIDA</span>
+                  <div class="spectrum-bars">
+                    <div class="spec-bar-row">
+                      <span>Rayos X Duros (Chandra)</span>
+                      <div class="bar-container"><div class="fill-bar fill-purple" style="width: 65%;"></div></div>
+                      <span class="percentage">65%</span>
+                    </div>
+                    <div class="spec-bar-row">
+                      <span>Ondas Milimétricas (ALMA)</span>
+                      <div class="bar-container"><div class="fill-bar fill-cyan" style="width: 28%;"></div></div>
+                      <span class="percentage">28%</span>
+                    </div>
+                    <div class="spec-bar-row">
+                      <span>Emisión Infrarroja (VLT)</span>
+                      <div class="bar-container"><div class="fill-bar" style="width: 7%;"></div></div>
+                      <span class="percentage">7%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TERMINAL INTERACTIVA & LOGS DE CIRCLECI EN VIVO -->
+      <section class="terminal-section glass-panel" id="terminal-section">
+        <div class="terminal-header">
+          <div class="terminal-dots">
+            <span class="dot red"></span>
+            <span class="dot yellow"></span>
+            <span class="dot green"></span>
+          </div>
+          <div class="terminal-title">AETHERIA TERMINAL // LIVE TELEMETRY STREAM &amp; CI/CD HOOKS</div>
+          <div class="terminal-actions">
+            <button id="btn-toggle-stream" class="terminal-action-btn">⏸ Pausar Stream</button>
+            <button id="btn-clear-terminal" class="terminal-action-btn">🗑 Limpiar</button>
+          </div>
+        </div>
+
+        <div class="terminal-body" id="terminal-logs">
+          <div class="log-line info">
+            <span class="log-time">[13:28:40 UTC]</span>
+            <span class="log-tag">[SYSTEM]</span>
+            <span class="log-msg">Iniciando subsistemas de telemetría orbital Aetheria v2.5...</span>
+          </div>
+          <div class="log-line success">
+            <span class="log-time">[13:28:41 UTC]</span>
+            <span class="log-tag">[CIRCLECI]</span>
+            <span class="log-msg">Pipeline verificado: Job 'validate_and_test' completado con éxito (0 fallos).</span>
+          </div>
+          <div class="log-line success">
+            <span class="log-time">[13:28:42 UTC]</span>
+            <span class="log-tag">[CIRCLECI]</span>
+            <span class="log-msg">Artefacto generado: 'orbit-ai-release-v1.0.0.tar.gz' almacenado en CI storage.</span>
+          </div>
+          <div class="log-line info">
+            <span class="log-time">[13:28:44 UTC]</span>
+            <span class="log-tag">[ANTENNA]</span>
+            <span class="log-msg">Bloqueo de fase establecido con DSN Goldstone (Canal 42, Banda Ka).</span>
+          </div>
+        </div>
+
+        <form class="terminal-input-row" id="terminal-form">
+          <span class="terminal-prompt">orbit-ai:~$</span>
+          <input type="text" id="terminal-input" class="terminal-input" placeholder="Escribe 'help', 'scan', 'flare', 'status' o 'circleci'..." autocomplete="off">
+          <button type="submit" class="terminal-submit-btn">Ejecutar</button>
+        </form>
+      </section>
+
+      <!-- PANEL INFORMATIVO DE CI/CD CON CIRCLECI -->
+      <section class="ci-cd-showcase glass-panel" id="cicd-section">
+        <div class="ci-cd-header">
+          <div class="ci-logo-badge">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <span>INTEGRACIÓN CONTINUA CON CIRCLECI</span>
+          </div>
+          <span class="badge-tag tag-green">BUILD PASSING (v2.1)</span>
+        </div>
+
+        <div class="ci-steps-grid">
+          <div class="ci-step-card">
+            <div class="step-num">01</div>
+            <h4>Git Push Trigger</h4>
+            <p>Cada confirmación enviada a la rama <code>main</code> dispara un webhook instantáneo hacia CircleCI.</p>
+          </div>
+          <div class="ci-step-card">
+            <div class="step-num">02</div>
+            <h4>Test Runner Automatizado</h4>
+            <p>El contenedor <code>cimg/node:20.11</code> valida la sintaxis HTML, estilos CSS y el motor JS.</p>
+          </div>
+          <div class="ci-step-card">
+            <div class="step-num">03</div>
+            <h4>Generación de Artefactos</h4>
+            <p>Empaqueta automáticamente el release en <code>.tar.gz</code> y lo resguarda en CircleCI Artifacts.</p>
+          </div>
+          <div class="ci-step-card">
+            <div class="step-num">04</div>
+            <h4>Despliegue a Producción</h4>
+            <p>Listo para sincronizar con GitHub Pages, Netlify o AWS S3 con cero tiempo de inactividad.</p>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="main-footer glass-panel">
+      <div class="footer-left">
+        <p>© 2026 Aetheria Orbit AI — Diseñado para integración CI/CD con GitHub &amp; CircleCI.</p>
+      </div>
+      <div class="footer-links">
+        <a href="#hero-section" class="footer-link">Inicio</a>
+        <a href="#sector-explorer-section" class="footer-link">Cuadrantes</a>
+        <a href="#terminal-section" class="footer-link">Terminal</a>
+        <a href="#cicd-section" class="footer-link">CircleCI Specs</a>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" class="toast-container" aria-live="polite"></div>
+
+  <!-- Script Principal -->
+  <script src="app.js"></script>
+</body>
+</html>

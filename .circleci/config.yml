@@ -1,0 +1,51 @@
+version: 2.1
+
+executors:
+  node-executor:
+    docker:
+      - image: cimg/node:20.11.0
+    working_directory: ~/repo
+
+jobs:
+  validate_and_test:
+    executor: node-executor
+    steps:
+      - checkout
+      - run:
+          name: Display Environment Info
+          command: |
+            echo "==== Node & NPM Information ===="
+            node --version
+            npm --version
+            echo "CI Execution on CircleCI Worker: $CIRCLE_BUILD_NUM"
+      - run:
+          name: Run Automated Health and Regression Tests
+          command: npm test
+      - run:
+          name: Run Code Quality and Structure Linter
+          command: npm run lint
+
+  package_artifacts:
+    executor: node-executor
+    steps:
+      - checkout
+      - run:
+          name: Create Deployable Web Bundle
+          command: |
+            mkdir -p dist
+            cp index.html style.css app.js dist/
+            tar -czf dist/orbit-ai-release-v1.0.0.tar.gz index.html style.css app.js
+            echo "Release bundle generated in dist/"
+            ls -la dist/
+      - store_artifacts:
+          path: dist
+          destination: build-artifacts
+
+workflows:
+  version: 2
+  build_test_and_package:
+    jobs:
+      - validate_and_test
+      - package_artifacts:
+          requires:
+            - validate_and_test
